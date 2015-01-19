@@ -1,6 +1,6 @@
 /**
  * 
- * @author [Bailiang] [Gong] <[bailiang]>
+ * @author [First Name] [Last Name] <[Andrew ID]>
  * @section [Section Letter]
  * @date [date]
  *
@@ -59,23 +59,22 @@ public class ColumnPuzzle implements MouseListener {
         colorsList = new Color[] {Color.RED, Color.YELLOW, Color.GREEN,
                                   Color.BLUE, Color.CYAN, Color.MAGENTA};
         // Write your code here. Delete this comment when you're done.
-        grid = new Color[numRows][6];
-//        for(int i=0; i<numRows; ++i){
-//        	grid[i] = colorsList;
-//        }
-        grid[0] = colorsList;
-        grid[1] = colorsList;
-        grid[2] = colorsList;
-        grid[0][0] = Color.BLACK;
-        ////////////////////////////////////////////////////
-        
+        grid = new Color[3][6];
+        grid[0] = new Color[] {Color.RED, Color.YELLOW, Color.GREEN,
+                                  Color.BLUE, Color.CYAN, Color.MAGENTA};
+        grid[1] = new Color[] {Color.RED, Color.YELLOW, Color.GREEN,
+                                  Color.BLUE, Color.CYAN, Color.MAGENTA};
+        grid[2] = new Color[] {Color.RED, Color.YELLOW, Color.GREEN,
+                                  Color.BLUE, Color.CYAN, Color.MAGENTA};
+        grid[2][5] = Color.BLACK;
+
     }
 
     /**
      * Returns the number of rows in the ColumnPuzzle.
      */
     public int getNumRows() {
-    	return grid.length;
+        return grid.length;
     }
 
     /**
@@ -104,13 +103,11 @@ public class ColumnPuzzle implements MouseListener {
      */
     public void swap(Integer row1, Integer col1, Integer row2, Integer col2) {
         // Write your code here. Delete this comment when you're done.
-//    	Color temp;
-//    	temp = grid[row2][col2];
-//    	grid[row2][col2] = grid[row1][col1];
-//    	grid[row1][col1] = temp;
-/////////////////////////////
-//    	grid[row1][col1] = Color.BLACK;
-//    	grid[row2][col2] = Color.BLUE;
+        Color temp;
+        temp = grid[row2][col2]; 
+        grid[row2][col2] = grid[row1][col1];
+        grid[row1][col1] = temp;
+
     }
 
     /**
@@ -125,16 +122,10 @@ public class ColumnPuzzle implements MouseListener {
      */
     public void shuffle() {
         // Write your code here. Delete this comment when you're done.
-//    	for(int i=0; i<=1; ++i){
-//    		Random rand = new Random();
-//    		System.out.println(rand.nextInt(3));
-//    		System.out.println(rand.nextInt(6));
-//    		System.out.println(rand.nextInt(3));
-//    		System.out.println(rand.nextInt(6));
-//    		System.out.println();
-//    		swap(rand.nextInt(3),rand.nextInt(6),rand.nextInt(3),rand.nextInt(6));
-//    	}
-
+        Random rand = new Random();
+        for(int i=0; i<=100; ++i){
+            swap(rand.nextInt(3),rand.nextInt(6),rand.nextInt(3),rand.nextInt(6));
+        }
     }
 
     /**
