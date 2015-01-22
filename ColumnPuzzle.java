@@ -1,8 +1,8 @@
 /**
  * 
- * @author [First Name] [Last Name] <[Andrew ID]>
- * @section [Section Letter]
- * @date [date]
+ * @author Bailiang Gong <bailiang>
+ * @section B
+ * @date 01/19/2015
  *
  */
 
@@ -43,7 +43,10 @@ public class ColumnPuzzle implements MouseListener {
         setup(numRows);
         shuffle();
         GUI = new GridGUI(grid,this);
-
+        Random digit = new Random();
+        for(int i=0; i<=100; ++i){
+        	System.out.println(digit.nextInt(10));
+        }
     }
 
     /**
@@ -58,16 +61,12 @@ public class ColumnPuzzle implements MouseListener {
         // Use only these colors.
         colorsList = new Color[] {Color.RED, Color.YELLOW, Color.GREEN,
                                   Color.BLUE, Color.CYAN, Color.MAGENTA};
-        // Write your code here. Delete this comment when you're done.
-        grid = new Color[3][6];
-        grid[0] = new Color[] {Color.RED, Color.YELLOW, Color.GREEN,
-                                  Color.BLUE, Color.CYAN, Color.MAGENTA};
-        grid[1] = new Color[] {Color.RED, Color.YELLOW, Color.GREEN,
-                                  Color.BLUE, Color.CYAN, Color.MAGENTA};
-        grid[2] = new Color[] {Color.RED, Color.YELLOW, Color.GREEN,
-                                  Color.BLUE, Color.CYAN, Color.MAGENTA};
-        grid[2][5] = Color.BLACK;
-
+        grid = new Color[numRows][NUM_OF_COLUMNS];
+        for(int i=0; i<numRows; ++i){
+        grid[i] = new Color[] {Color.RED, Color.YELLOW, Color.GREEN,
+                               Color.BLUE, Color.CYAN, Color.MAGENTA}; 
+        }   
+        grid[numRows-1][NUM_OF_COLUMNS-1] = Color.BLACK;
     }
 
     /**
@@ -102,12 +101,10 @@ public class ColumnPuzzle implements MouseListener {
      * Swaps the colors at the given points.
      */
     public void swap(Integer row1, Integer col1, Integer row2, Integer col2) {
-        // Write your code here. Delete this comment when you're done.
         Color temp;
         temp = grid[row2][col2]; 
         grid[row2][col2] = grid[row1][col1];
         grid[row1][col1] = temp;
-
     }
 
     /**
@@ -121,10 +118,10 @@ public class ColumnPuzzle implements MouseListener {
      * 4. Repeat this process until you have performed 100 color swaps.
      */
     public void shuffle() {
-        // Write your code here. Delete this comment when you're done.
         Random rand = new Random();
         for(int i=0; i<=100; ++i){
-            swap(rand.nextInt(3),rand.nextInt(6),rand.nextInt(3),rand.nextInt(6));
+            swap(rand.nextInt(getNumRows()),rand.nextInt(getNumCols()),
+                 rand.nextInt(getNumRows()),rand.nextInt(getNumCols()));
         }
     }
 
@@ -133,8 +130,7 @@ public class ColumnPuzzle implements MouseListener {
      * You should look at the API for JFrame to learn how to update the title.
      */
     public void setTitle(String title) {
-        // Write your code here. Delete this comment when you're done.
-
+        GUI.setTitle(title);
     }
 
     /** 
@@ -150,9 +146,26 @@ public class ColumnPuzzle implements MouseListener {
      * or one color and the black square.
      */
     public boolean isSolved() {
-        // Write your code here. Delete this comment when you're done.
-
-        return true; // Delete this when you write your own code.
+        if(getNumRows() == 1) return true;
+        // Compares each element with the first or second element from each column.
+        for (int i = 0; i < getNumCols(); ++i) {
+            Color comparedValue = grid[0][i];
+            if (comparedValue != Color.BLACK) {
+                for (int j = 1; j < getNumRows(); ++j) {
+                    if (grid[j][i] != Color.BLACK && grid[j][i] != comparedValue) {
+                        return false;
+                    }
+                }
+            } else {
+                comparedValue = grid[1][i];
+                for (int j = 1; j < getNumRows(); ++j) {
+                    if (grid[j][i] != comparedValue) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }	
 
     /**
@@ -161,9 +174,29 @@ public class ColumnPuzzle implements MouseListener {
      * is found.
      */
     public int[] adjacentBlackSquare(Integer row, Integer col) {
-        // Write your code here. Delete this comment when you're done.
-
-        return null; // Delete this when you write your own code.
+        int[] adjacentBlack = new int[2];
+        boolean ifFind = false;
+        // Finds the location of Black square.
+        for(int i=0; i<getNumRows(); ++i){
+            for(int j=0; j<getNumCols(); ++j){
+                if(grid[i][j] == Color.BLACK){
+                    adjacentBlack[0] = i;
+                    adjacentBlack[1] = j;
+                    ifFind = true;
+                    break;
+                }
+            }
+            if(ifFind) break;
+        }
+        // Tests if the Black square is adjacent to current square.
+        if((Math.abs(adjacentBlack[0]-row)==1&&adjacentBlack[1]==col)
+            ||(Math.abs(adjacentBlack[1]-col)==1&&adjacentBlack[0]==row)){
+            return adjacentBlack;
+        }else{
+            adjacentBlack[0] = -1;
+            adjacentBlack[1] = -1;
+            return adjacentBlack;
+        }
     }
 
     /**
@@ -181,14 +214,25 @@ public class ColumnPuzzle implements MouseListener {
      */
     public void mousePressed(MouseEvent e) {
         // Stops any moves from being made once the puzzle is solved.
-        if (isSolved()) return;
-
+        if (isSolved()){ setTitle("You won!");return;}
         // Gets the row and column of the clicked square
         int row = e.getY()/100;
         int col = e.getX()/100;
-
-        // Write the code for steps 1-5 here. Delete this comment.
-
+        int[] adjacentBlack = new int[2];
+        adjacentBlack = adjacentBlackSquare(row,col);
+        if(adjacentBlack[0] == -1 && adjacentBlack[1] == -1){
+            setTitle("Illegal move");
+            return;
+        }
+        swap(row,col,adjacentBlack[0],adjacentBlack[1]);
+        ++numMoves;
+        if(isSolved()){
+            setTitle("You won!");
+            return;
+        }else{
+            setTitle(numMoves + " moves");
+            return;
+        }
     }
 
 
